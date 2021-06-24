@@ -1,0 +1,61 @@
+.Vendor {
+  direction: rtl;
+  padding-top: 1rem;
+
+  &__heading {
+    display: flex;
+    align-items: center;
+    width: 90%;
+    margin: 0 auto;
+    margin-bottom: 1rem;
+
+    &-logo {
+      img {
+        border-radius: 10px;
+        height: 6rem;
+      }
+    }
+
+    &-info {
+      margin-right: 1rem;
+
+      &-name {
+        @include typographyStyle(1.2rem, bold, normal, $black-color);
+        margin-bottom: 1rem;
+      }
+
+      &-category {
+        @include typographyStyle(0.8rem, bold, normal, $gray-color);
+      }
+    }
+  }
+
+  &__subtitle {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+
+    &-rating {
+      &-score {
+        background-color: $green-color;
+        @include typographyStyle(1rem, bold, normal, $white-color);
+        border-radius: 10px;
+        padding: 0.3rem;
+      }
+
+      &-vote-count {
+        display: inline-block;
+        margin-left: 1rem;
+        @include typographyStyle(0.8rem, normal, normal, $gray-color);
+      }
+    }
+  }
+
+  &__border {
+    background-color: $light-gray-color;
+    width: 90%;
+    text-align: center;
+    border: 1px solid $light-gray-color;
+    margin: 1rem auto;
+  }
+}

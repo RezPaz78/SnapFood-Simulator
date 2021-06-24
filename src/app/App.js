@@ -1,6 +1,8 @@
 import React, { Suspense, useEffect, useState } from "react";
 import { Switch } from "react-router-dom";
 import { renderRoutes, routes } from "./routes";
+import Layout from "../components/layout";
+import Loading from "../components/loading";
 
 const App = () => {
   const [renderedRoutes, setRenderedRoutes] = useState();
@@ -12,9 +14,11 @@ const App = () => {
 
   return (
     <div className="App">
-      <Suspense fallback={() => <h2>Loading...</h2>}>
-        <Switch>{renderedRoutes}</Switch>
-      </Suspense>
+      <Layout>
+        <Suspense fallback={<Loading />}>
+          <Switch>{renderedRoutes}</Switch>
+        </Suspense>
+      </Layout>
     </div>
   );
 };

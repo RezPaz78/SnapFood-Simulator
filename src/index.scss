@@ -1,5 +1,9 @@
 // abstracts
-@import "./assets/sass/base/fonts","./assets/sass/base/base";
+@import "./assets/sass/base/fonts", "./assets/sass/base/base",
+  "./assets/sass/base/variables", "./assets/sass/base/mixins";
 
 // components
-@import "./assets/sass/components/vendor"
+@import "./assets/sass/components/vendor", "./assets/sass/components/navbar";
+
+// pages
+@import "./assets/sass/pages/home", "./assets/sass/pages/vendors";

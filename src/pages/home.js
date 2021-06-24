@@ -1,10 +1,9 @@
 import React from "react";
-import { Link } from "react-router-dom";
 
 const Home = () => {
   return (
     <div className="Home">
-      <Link to="/vendors">لیست رستوران‌ها</Link>
+      <h1 className="Home__title">به اسنپ‌فود خوش آمدید.</h1>
     </div>
   );
 };
