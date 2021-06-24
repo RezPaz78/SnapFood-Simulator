@@ -5,7 +5,7 @@ import Vendor from "../components/vendor";
 
 const Vendors = () => {
   const [vendors, vendorsDispatch] = useVendors();
-  const vendorsRef = useRef();
+  const bottomRef = useRef();
 
   useEffect(() => {
     axios
@@ -19,7 +19,6 @@ const Vendors = () => {
       })
       .then((res) => {
         const result = res.data.data;
-        console.log(result);
         vendorsDispatch({
           type: "ADD",
           payload: { vendors: result.finalResult },
@@ -35,37 +34,36 @@ const Vendors = () => {
   ]);
 
   useEffect(() => {
-    let increased = false;
-
-    const isBottom = (el) => {
-      return el.getBoundingClientRect().bottom <= window.innerHeight;
+    const bottomElem = bottomRef.current;
+    const options = {
+      root: null,
+      rootMargin: "10px",
+      threshhold: 1,
     };
-
-    const trackScrolling = () => {
-      if (isBottom(vendorsRef.current) && !increased) {
-        console.log("header bottom reached");
+    const observerHandler = (entries) => {
+      if (entries[0].isIntersecting) {
         vendorsDispatch({
-          type: "CHANGE_FILTERS",
-          payload: { page: vendors.page + 1 },
+          type: "INCREASE_PAGE",
         });
-        increased = true;
-        // document.removeEventListener("scroll", trackScrolling);
       }
     };
-
-    document.addEventListener("scroll", trackScrolling);
+    const intersectionObserver = new IntersectionObserver(
+      observerHandler,
+      options
+    );
+    if (bottomElem) intersectionObserver.observe(bottomElem);
 
     return () => {
-      document.removeEventListener("scroll", trackScrolling);
-      increased = false;
+      if (bottomElem) intersectionObserver.unobserve(bottomElem);
     };
-  }, [vendors.page, vendorsDispatch]);
+  }, [vendorsDispatch]);
 
   return (
-    <div ref={vendorsRef} className="Vendors">
-      {vendors.allVendors.slice(1).map((vendor) => {
-        return <Vendor key={vendor.id} {...vendor} />;
+    <div className="Vendors">
+      {vendors.allVendors.slice(1).map((vendor, index) => {
+        return <Vendor key={index} {...vendor} />;
       })}
+      <div ref={bottomRef}></div>
     </div>
   );
 };
