@@ -1,70 +1,70 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import axios from "../utils/axios";
-import { useVendors } from "../context/vendors/vendorsContext";
+import { useVendorsContext } from "../context/vendors/vendorsContext";
 import Vendor from "../components/vendor";
+import { useIntersectionObserver } from "../utils/useIntersectionObserver";
+import SEO from "../components/seo";
+
+const options = {
+  root: null,
+  rootMargin: "10px",
+  threshold: 1,
+};
 
 const Vendors = () => {
-  const [vendors, vendorsDispatch] = useVendors();
-  const bottomRef = useRef();
-
+  const [vendors, vendorsDispatch] = useVendorsContext();
   useEffect(() => {
-    axios
-      .get("v3/restaurant/vendors-list", {
-        params: {
-          page: vendors.page,
-          page_size: vendors.pageSize,
-          lat: vendors.lat,
-          long: vendors.long,
-        },
-      })
-      .then((res) => {
+    const fetchVendors = async () => {
+      try {
+        const res = await axios.get("v3/restaurant/vendors-list", {
+          params: {
+            page: vendors.page,
+            page_size: vendors.pageSize,
+            lat: vendors.lat,
+            long: vendors.long,
+          },
+        });
         const result = res.data.data;
         vendorsDispatch({
           type: "ADD",
           payload: { vendors: result.finalResult },
         });
-      })
-      .catch((err) => console.log(err));
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchVendors();
   }, [
-    vendors.lat,
-    vendors.long,
     vendors.page,
     vendors.pageSize,
+    vendors.lat,
+    vendors.log,
+    vendors.long,
     vendorsDispatch,
   ]);
 
-  useEffect(() => {
-    const bottomElem = bottomRef.current;
-    const options = {
-      root: null,
-      rootMargin: "10px",
-      threshhold: 1,
-    };
-    const observerHandler = (entries) => {
-      if (entries[0].isIntersecting) {
-        vendorsDispatch({
-          type: "INCREASE_PAGE",
-        });
-      }
-    };
-    const intersectionObserver = new IntersectionObserver(
-      observerHandler,
-      options
-    );
-    if (bottomElem) intersectionObserver.observe(bottomElem);
+  const ref = useIntersectionObserver(options, () => {
+    vendorsDispatch({
+      type: "INCREASE_PAGE",
+    });
+  });
 
+  useEffect(() => {
     return () => {
-      if (bottomElem) intersectionObserver.unobserve(bottomElem);
+      vendorsDispatch({ type: "RESET" });
     };
   }, [vendorsDispatch]);
 
   return (
-    <div className="Vendors">
-      {vendors.allVendors.slice(1).map((vendor, index) => {
-        return <Vendor key={index} {...vendor} />;
-      })}
-      <div ref={bottomRef}></div>
-    </div>
+    <>
+      <SEO title="اسنپ‌فود | رستوران‌ها" />
+      <div className="Vendors">
+        {vendors.allVendors.slice(1).map((vendor, index) => {
+          return <Vendor key={index} {...vendor.data} />;
+        })}
+        <div ref={ref}></div>
+      </div>
+    </>
   );
 };
 

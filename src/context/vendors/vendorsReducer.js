@@ -11,6 +11,15 @@ const VendorsReducer = (state, action) => {
     case "INCREASE_PAGE":
       const newPage = state.page + 1;
       return { ...state, page: newPage };
+    case "RESET":
+      return {
+        allVendors: [],
+        currentPage: [],
+        page: 0,
+        pageSize: 10,
+        lat: 35.754,
+        long: 51.328,
+      };
     default:
       return { ...state };
   }

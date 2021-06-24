@@ -11,12 +11,12 @@ import "./index.scss";
 import VendorsProvider from "./context/vendors/vendorsProvider";
 
 ReactDOM.render(
-  <React.StrictMode>
-    <BrowserRouter>
+  <BrowserRouter>
+    <React.StrictMode>
       <Compose components={[VendorsProvider]}>
         <App />
       </Compose>
-    </BrowserRouter>
-  </React.StrictMode>,
+    </React.StrictMode>
+  </BrowserRouter>,
   document.getElementById("root")
 );
