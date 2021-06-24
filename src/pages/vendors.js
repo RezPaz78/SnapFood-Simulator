@@ -63,7 +63,7 @@ const Vendors = () => {
 
   return (
     <div ref={vendorsRef} className="Vendors">
-      {vendors.allVendors.map((vendor) => {
+      {vendors.allVendors.slice(1).map((vendor) => {
         return <Vendor key={vendor.id} {...vendor} />;
       })}
     </div>
