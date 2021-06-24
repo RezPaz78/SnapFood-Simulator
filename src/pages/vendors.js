@@ -1,15 +1,21 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import axios from "../utils/axios";
 import { useVendors } from "../context/vendors/vendorsContext";
 import Vendor from "../components/vendor";
 
 const Vendors = () => {
   const [vendors, vendorsDispatch] = useVendors();
+  const vendorsRef = useRef();
 
   useEffect(() => {
     axios
       .get("v3/restaurant/vendors-list", {
-        params: { page: 0, page_size: 10, lat: 35.754, long: 51.328 },
+        params: {
+          page: vendors.page,
+          page_size: vendors.pageSize,
+          lat: vendors.lat,
+          long: vendors.long,
+        },
       })
       .then((res) => {
         const result = res.data.data;
@@ -20,17 +26,46 @@ const Vendors = () => {
         });
       })
       .catch((err) => console.log(err));
-  }, [vendorsDispatch]);
+  }, [
+    vendors.lat,
+    vendors.long,
+    vendors.page,
+    vendors.pageSize,
+    vendorsDispatch,
+  ]);
 
   useEffect(() => {
-    console.log(vendors);
-  }, [vendors]);
+    let increased = false;
+
+    const isBottom = (el) => {
+      return el.getBoundingClientRect().bottom <= window.innerHeight;
+    };
+
+    const trackScrolling = () => {
+      if (isBottom(vendorsRef.current) && !increased) {
+        console.log("header bottom reached");
+        vendorsDispatch({
+          type: "CHANGE_FILTERS",
+          payload: { page: vendors.page + 1 },
+        });
+        increased = true;
+        // document.removeEventListener("scroll", trackScrolling);
+      }
+    };
+
+    document.addEventListener("scroll", trackScrolling);
+
+    return () => {
+      document.removeEventListener("scroll", trackScrolling);
+      increased = false;
+    };
+  }, [vendors.page, vendorsDispatch]);
 
   return (
-    <div className="Vendors">
-      <Vendor />
-      <Vendor />
-      <Vendor />
+    <div ref={vendorsRef} className="Vendors">
+      {vendors.allVendors.map((vendor) => {
+        return <Vendor key={vendor.id} {...vendor} />;
+      })}
     </div>
   );
 };
